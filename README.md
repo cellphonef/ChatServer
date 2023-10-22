@@ -8,7 +8,7 @@ ChatServer是一个集群聊天服务器，采用C/C++进行开发，支持如�
 - 群聊。
 - 退出登录。
 
-架构实现：
+
 - 网络层采用MyMuduo实现。
 - 利用MySQL存储数据。
 - 采用Nginx作为负载均衡。
@@ -42,6 +42,9 @@ ChatServer是一个集群聊天服务器，采用C/C++进行开发，支持如�
 ### 编译安装 nginx
 
 ```bash
+# 0. 安装依赖
+# 包括gcc、make、pcre、openssl、zlib等
+
 # 1. 下载 nginx 源码
 wget http://nginx.org/download/nginx-1.22.1.tar.gz
 
@@ -60,34 +63,33 @@ cd /usr/local/nginx/sbin/nginx && ./nginx
 # 6. 修改配置文件
 sudo vim /usr/local/nginx/conf/nginx.conf
 
-# 在文件中添加集群服务器配置
-# 以下以两台服务器为例：
-# 
-# ...
-# 
-# stream {
-  
-#     upstream MyServer {
-#         server 127.0.0.1:8001 weight=1 max_fails=3 fail_timeout=30s;  # 实际工作服务器监听8001
-#         server 127.0.0.1:8002 weight=1 max_fails=3 fail_timeout=30s; # 实际工作服务器监听8002
-#     }
-  
-#     server {
-#         proxy_connect_timeout 1s;
-#         listen 8000;  # 反向代理服务器监听8000端口
-#         proxy_pass MyServer;
-#         tcp_nodelay on;
-#     }
+    # 在文件中添加集群服务器配置
+    # 以下以两台服务器为例：
+    # 
+    # ...
+    # 
+    # stream {
+    
+    #     upstream MyServer {
+    #         server 127.0.0.1:8001 weight=1 max_fails=3 fail_timeout=30s;  # 实际工作服务器监听8001
+    #         server 127.0.0.1:8002 weight=1 max_fails=3 fail_timeout=30s;  # 实际工作服务器监听8002
+    #     }
+    
+    #     server {
+    #         proxy_connect_timeout 1s;
+    #         listen 8000;  # 反向代理服务器监听8000端口
+    #         proxy_pass MyServer;
+    #         tcp_nodelay on;
+    #     }
 
-# }
-# 
-# ...
-# 
+    # }
+    # 
+    # ...
+    # 
 
-
+# 7. 使配置生效
+./nginx -s reload
 ```
-
-
 
 ### 安装 redis-server
 
